@@ -9,7 +9,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, Person, Planet, User
+from models import db, Person, Planet, User, Favorite
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -80,6 +80,14 @@ def get_users():
     response_body = [user.serialize() for user in users]
     if not response_body:
         return jsonify({"error": "Users not found"}), 404
+    return jsonify(response_body), 200
+
+@app.route('/<int:user_id>/favorites', methods=["GET"])
+def get_user_favorites(user_id):
+    favorites = db.session.execute(select(Favorite).where(Favorite.user_id == user_id)).scalars().all()
+    response_body = [fav.serialize() for fav in favorites]
+    if not response_body:
+        return jsonify({"error": f"Favorites in user {user_id} not found"}), 404
     return jsonify(response_body), 200
 
 # this only runs if `$ python src/app.py` is executed
