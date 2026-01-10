@@ -52,9 +52,9 @@ class User(db.Model):
     
 class Favorite(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    planet_id: Mapped[int | None] = mapped_column(ForeignKey("planet.id"), nullable=True)
+    planet_id: Mapped[int | None] = mapped_column(ForeignKey("planet.id"), nullable=True, unique=True)
     planet: Mapped["Planet"] = relationship(back_populates="favorites")
-    person_id: Mapped[int | None] = mapped_column(ForeignKey("person.id"), nullable=True)
+    person_id: Mapped[int | None] = mapped_column(ForeignKey("person.id"), nullable=True, unique=True)
     person: Mapped["Person"] = relationship(back_populates="favorites")
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     user: Mapped["User"] = relationship(back_populates="favorites")
@@ -64,5 +64,5 @@ class Favorite(db.Model):
             "id": self.id,
             "planet_id": self.planet_id,
             "person_id": self.person_id,
-            "user_id": self.user_id
+            "user_id": self.user_id,
         }
